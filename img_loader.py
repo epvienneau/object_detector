@@ -6,12 +6,11 @@ import scipy.misc
 def normalizeImage(img):
     img = img.astype('float')
     # Do not touch the alpha channel
-    for i in range(3):
-        minval = img.min()
-        maxval = img.max()
-        if minval != maxval:
-            img -= minval
-            img /= (maxval-minval)
+    minval = img.min()
+    maxval = img.max()
+    if minval != maxval:
+        img -= minval
+        img /= (maxval-minval)
     return img*255
 
 
@@ -30,7 +29,7 @@ class img_loader(data.Dataset):
         img_file = os.path.join(img_dir, img_name)
         gray_img = scipy.misc.imread(img_file)
         gray_img = normalizeImage(gray_img)
-        data = np.zeros([3, 512, 512], np.float32)
+        data = np.zeros([326, 490, 3], np.float32)
         data[2, :, :] = gray_img
         data[1, :, :] = gray_img
         data[0, :, :] = gray_img
