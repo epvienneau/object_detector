@@ -68,12 +68,12 @@ def main():
     # parse txt file to create dictionary for dataloader
     coord1_train = []
     coord2_train = []
-    coord1_test = []
-    coord2_test = []
+    coord1_val = []
+    coord2_val = []
     img_file_train = []
-    img_file_test = []
+    img_file_val = []
     img_path_train = ['train/']*105
-    img_path_test = ['test/']*6
+    img_path_val = ['val/']*10
     with open('labels/labels.txt', 'r') as f:
         for count, line in enumerate(f):
             #line = f.readline()
@@ -81,18 +81,18 @@ def main():
             file_num = line[0]
             file_num = file_num.split('.')
             file_num = int(file_num[0]) #now file_num is just the file number 
-            if file_num > 120:
-                img_file_test.append(line[0])
-                coord1_test.append(line[1])
-                coord2_test.append(line[2])
-            else:
+            if file_num<111:
                 img_file_train.append(line[0])
                 coord1_train.append(line[1])
                 coord2_train.append(line[2])
+            else:
+                img_file_val.append(line[0])
+                coord1_val.append(line[1])
+                coord2_val.append(line[2])
     data_train = [coord1_train, coord2_train, img_file_train, img_path_train]
-    data_test = [coord1_test, coord2_test, img_file_test, img_path_test]
+    data_val = [coord1_val, coord2_val, img_file_val, img_path_va]
     train_loader = torch.utils.data.DataLoader(img_loader(data_train), batch_size=args.batch_size, shuffle=True, **kwargs)
-    test_loader = torch.utils.data.DataLoader(img_loader(data_test), batch_size=args.test_batch_size, shuffle=True, **kwargs)
+    test_loader = torch.utils.data.DataLoader(img_loader(data_val), batch_size=args.test_batch_size, shuffle=True, **kwargs)
 
     model = torchvision.models.resnet18(pretrained=False, **kwargs).to(device)
     optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
