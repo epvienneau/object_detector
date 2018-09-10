@@ -65,10 +65,31 @@ def main():
 
     kwargs = {'num_workers': 1, 'pin_memory': True} if use_cuda else {}
     # parse txt file to create dictionary for dataloader
-    fid = open('labels/labels.txt', 'r')
-    fid.readline()
-    img_coords
-    img_names
+    coord1_train = []
+    coord2_train = []
+    coord1_test = []
+    coord2_test = []
+    img_file_train = []
+    img_file_test = []
+    img_path_train = ['train/']*105
+    img_path_test = ['test/']*6
+    with open('labels/labels.txt', 'r') as f:
+        for count, ln in enumerate(f):
+            line = f.readline()
+            line = line.split() #now line is a list
+            file_num = line[0]
+            file_num = file_num.split('.')
+            file_num = int(file_num[0]) #now file_num is just the file number 
+            if file_num > 120:
+                img_file_test.append(line[0])
+                coord1_test.append(line[1])
+                coord2_test.append(line[2])
+            else:
+                img_file_train.append(line[0])
+                coord1_train.append(line[1])
+                coord2_trian.append(line[2])
+    data_train = [coord1_train, coord2_train, img_file_train, img_path_train]
+    data_test = [coord1_test, coord2_test, img_file_test, img_path_test]
     train_loader = torch.utils.data.DataLoader(
         datasets.MNIST('../data', train=True, download=True,
                        transform=transforms.Compose([
