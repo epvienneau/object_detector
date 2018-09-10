@@ -64,6 +64,11 @@ def main():
     device = torch.device("cuda" if use_cuda else "cpu")
 
     kwargs = {'num_workers': 1, 'pin_memory': True} if use_cuda else {}
+    # parse txt file to create dictionary for dataloader
+    fid = open('labels/labels.txt', 'r')
+    fid.readline()
+    img_coords
+    img_names
     train_loader = torch.utils.data.DataLoader(
         datasets.MNIST('../data', train=True, download=True,
                        transform=transforms.Compose([
