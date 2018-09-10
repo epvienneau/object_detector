@@ -6,6 +6,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torchvision import datasets, transforms
 import torchvision.models
+from img_loader import img_loader
 
 def train(args, model, device, train_loader, optimizer, epoch):
     model.train()
@@ -74,8 +75,8 @@ def main():
     img_path_train = ['train/']*105
     img_path_test = ['test/']*6
     with open('labels/labels.txt', 'r') as f:
-        for count, ln in enumerate(f):
-            line = f.readline()
+        for count, line in enumerate(f):
+            #line = f.readline()
             line = line.split() #now line is a list
             file_num = line[0]
             file_num = file_num.split('.')
@@ -87,17 +88,11 @@ def main():
             else:
                 img_file_train.append(line[0])
                 coord1_train.append(line[1])
-                coord2_trian.append(line[2])
+                coord2_train.append(line[2])
     data_train = [coord1_train, coord2_train, img_file_train, img_path_train]
     data_test = [coord1_test, coord2_test, img_file_test, img_path_test]
-    train_loader = torch.utils.data.DataLoader(
-        datasets.MNIST('../data', train=True, download=True,
-                       transform=transforms.Compose([
-                           transforms.ToTensor(),
-                           transforms.Normalize((0.1307,), (0.3081,))
-                       ])),
-        batch_size=args.batch_size, shuffle=True, **kwargs)
-    test_loader = torch.utils.data.DataLoader(img_loader() , batch_size=args.test_batch_size, shuffle=True, **kwargs)
+    train_loader = torch.utils.data.DataLoader(img_loader(data_train), batch_size=args.batch_size, shuffle=True, **kwargs)
+    test_loader = torch.utils.data.DataLoader(img_loader(data_test), batch_size=args.test_batch_size, shuffle=True, **kwargs)
 
     model = torchvision.models.resnet18(pretrained=False, **kwargs).to(device)
     optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
