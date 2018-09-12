@@ -109,6 +109,9 @@ def main():
         train(args, model, device, train_loader, optimizer, epoch)
         test(args, model, device, test_loader)
 
+    torch.save(model.state_dict(), './Resnetmodel.pt')
+    import pytest; pytest.set_trace()
+
 if __name__ == '__main__':
     main()
 
