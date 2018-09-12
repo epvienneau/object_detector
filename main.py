@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torchvision import datasets, transforms
-import torchvision.models
+import torchvision.models as models
 from img_loader import img_loader
 import torch.utils.model_zoo as model_zoo
 import math
@@ -13,11 +13,12 @@ import numpy as np
 
 def train(args, model, device, train_loader, optimizer, epoch):
     model.train()
-    for batch_idx, (data, c1, c2) in enumerate(train_loader):
-        data, c1, c2 = data.to(device), c1.to(device), c2.to(device)
+    for batch_idx, (data, target) in enumerate(train_loader):
+        data, target= data.to(device), target.to(device)
         optimizer.zero_grad()
         output = model(data)
-        loss = mse_loss(output, target)
+        criterion = nn.MSELoss()
+        loss = criterion(output, target)
         loss.backward()
         optimizer.step()
         if batch_idx % args.log_interval == 0:
@@ -33,7 +34,8 @@ def test(args, model, device, test_loader):
         for data, target in test_loader:
             data, target = data.to(device), target.to(device)
             output = model(data)
-            test_loss += mse_loss(output, target, reduction='sum').item() 
+            criterion = nn.MSELoss()
+            test_loss += criterion(output, target).item() 
             pred = output.max(1, keepdim=True)[1] 
             correct += pred.eq(target.view_as(pred)).sum().item()
 
@@ -76,7 +78,7 @@ def main():
     img_file_train = []
     img_file_val = []
     img_path_train = ['train/']*105
-    img_path_val = ['val/']*10
+    img_path_val = ['validation/']*10
     with open('labels/labels.txt', 'r') as f:
         for count, line in enumerate(f):
             #line = f.readline()
@@ -94,10 +96,13 @@ def main():
                 coord2_val.append(float(line[2]))
     data_train = [coord1_train, coord2_train, img_file_train, img_path_train]
     data_val = [coord1_val, coord2_val, img_file_val, img_path_val]
-    train_loader = torch.utils.data.DataLoader(img_loader(data_train), batch_size=args.batch_size, shuffle=True, **kwargs)
-    test_loader = torch.utils.data.DataLoader(img_loader(data_val), batch_size=args.test_batch_size, shuffle=True, **kwargs)
+    train_loader = torch.utils.data.DataLoader(img_loader(data_train), batch_size=1, shuffle=True, **kwargs)
+    test_loader = torch.utils.data.DataLoader(img_loader(data_val), batch_size=1, shuffle=True, **kwargs)
 
-    model = resnet18(pretrained=False, **kwargs).to(device)
+    model = models.resnet18(pretrained=True, **kwargs).to(device)
+    num_ftrs = model.fc.in_features
+    model.fc = nn.Linear(num_ftrs, 2)
+    model.double()
     optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
 
     for epoch in range(1, args.epochs + 1):
