@@ -30,7 +30,7 @@ class BasicBlock(nn.Module):
         self.conv2 = conv3x3(planes, planes)
         self.bn2 = nn.BatchNorm2d(planes)
         self.downsample = downsample
-        self.stride = stride
+        self.stride = stride 
 
     def forward(self, x):
         residual = x
@@ -100,9 +100,10 @@ class ResNet(nn.Module):
         self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
         self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
         self.fc = nn.Linear(512 * block.expansion, num_classes)
+        self.double()
         
         for m in self.modules():
-            if isinstance(m, nn.Conv2d):
+            if isinstance(m, nn.Conv2d): 
                 nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
             elif isinstance(m, nn.BatchNorm2d):
                 nn.init.constant_(m.weight, 1)
@@ -125,12 +126,13 @@ class ResNet(nn.Module):
             
             return nn.Sequential(*layers)
 
-    def forward(self, x):
+    def forward(self, x): 
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.relu(x)
         x = self.maxpool(x)
 
+        print(self.layer1)
         x = self.layer1(x)
         x = self.layer2(x)
         x = self.layer3(x)
