@@ -9,6 +9,7 @@ import torchvision.models
 from img_loader import img_loader
 import torch.utils.model_zoo as model_zoo
 import math
+import numpy as np
 
 __all__ = ['Resnet', 'resnet18']
 
