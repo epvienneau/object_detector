@@ -33,7 +33,6 @@ class img_loader(data.Dataset):
         return [gray_img]
 
     def __len__(self):
-        self.total_count = len(self.sub_list)
-        return self.total_count
+        return len(self.sub_list[0])
 
 

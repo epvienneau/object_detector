@@ -35,8 +35,7 @@ class img_loader(data.Dataset):
         gray_img = gray_img.astype('float')
         return [gray_img, coordinates]
 
-    def __len__(self):
-        self.total_count = len(self.sub_list)
-        return self.total_count
+    def __len__(self): 
+        return len(self.sub_list[0]) 
 
 
